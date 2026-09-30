@@ -413,97 +413,143 @@ body.is-locked{overflow:hidden}
 .stat__n{font-size:clamp(1.8rem,3.4vw,2.75rem);line-height:1;letter-spacing:-.04em;font-weight:500}
 .stat__l{margin-top:8px}
 
-/* ---------- 13. Selected work ---------- */
-.work__head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;padding-bottom:22px;margin-bottom:clamp(40px,5vw,72px);border-bottom:1px solid var(--line)}
+/* ---------- 13. Selected work ----------
+   Immersive project sections instead of a card grid. Mobile-first: everything
+   stacks. The two-column compositions, the progress rail and the parallax only
+   switch on at wider widths. */
 
-.proj{display:block;position:relative;border-top:1px solid var(--line);padding-block:clamp(28px,3.6vw,52px)}
-.proj:first-of-type{border-top:0}
-.proj__idx{position:absolute;top:clamp(28px,3.6vw,52px);left:0;color:var(--ink-3)}
-.proj__body{display:grid;gap:clamp(20px,3vw,44px);align-items:center}
-.proj__title{display:inline-flex;align-items:baseline;gap:.4em;transition:transform .6s var(--e)}
-.proj:hover .proj__title{transform:translateX(10px)}
-.proj__title .arw{font-size:.55em;opacity:0;transform:translateX(-10px);transition:opacity .5s var(--e),transform .5s var(--e);color:var(--accent)}
-.proj:hover .proj__title .arw{opacity:1;transform:none}
-.proj__client{margin-top:10px}
-.proj__desc{margin-top:16px;max-width:48ch}
-.proj__meta{display:flex;flex-wrap:wrap;gap:8px 0;margin-top:clamp(20px,2.6vw,30px);border-top:1px solid var(--line-soft);padding-top:16px}
-.proj__meta dl{display:flex;flex-wrap:wrap;gap:0;width:100%}
-.proj__meta div{flex:1 1 130px;min-width:110px}
-.proj__meta dt{margin-bottom:5px}
-.proj__meta dd{font-size:.85rem;color:var(--ink);margin:0}
-.proj__media{overflow:hidden;background:var(--paper-2)}
-.proj__media img{width:100%;height:100%;object-fit:cover;transition:transform 1.1s var(--e),filter .9s var(--e)}
-.proj:hover .proj__media img{transform:scale(1.035)}
-.proj__tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
-.tag{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);border:1px solid var(--line);border-radius:999px;padding:5px 11px}
+.work{position:relative;padding-block:var(--sec-y) 0}
 
-/* layout variants */
-.proj--a .proj__body{grid-template-columns:minmax(0,.86fr) minmax(0,1.14fr)}
-.proj--a .proj__media{aspect-ratio:4/3}
-.proj--b .proj__body{grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr)}
-.proj--b .proj__media{aspect-ratio:5/4}
-.proj--b .proj__txt{order:2}
-.proj--b .proj__media{order:1}
-.proj--c .proj__body{grid-template-columns:1fr}
-.proj--c .proj__media{aspect-ratio:21/9}
-.proj--c .proj__foot{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(20px,3vw,44px);align-items:start}
-.proj__lead{padding-top:clamp(20px,2.6vw,30px)}
-
-/* further work — composed as a spread, not a list.
-   Explicit placement drops the five entries across three rows with deliberate
-   gaps; the odd ones also sit a little lower, so the eye travels rather than
-   scanning straight down. Collapses to one column below 861px. */
-.further{margin-top:clamp(56px,7vw,96px)}
-
-.arch{
-  display:grid;grid-template-columns:1fr;
-  column-gap:clamp(24px,3vw,48px);
-  row-gap:clamp(40px,5vw,72px);
-  /* deliberately not clipped: the drift is small enough (max 14px) that the
-     page gutter absorbs it, and clipping here shaved the edge off the entries
-     sitting in column 1 */
+/* --- intro --- */
+.work-intro{padding-bottom:clamp(56px,8vw,120px)}
+.work-intro__grid{
+  display:grid;grid-template-columns:1fr;gap:clamp(28px,4vw,56px);
+  margin-top:clamp(22px,3vw,34px);align-items:end;
 }
-.arch__item{will-change:transform}
-.arch__inner{
-  position:relative;padding-top:18px;border-top:1px solid var(--line);
-  transition:border-color .5s var(--e);
+.work-intro__title{max-width:18ch}
+.work-intro__lead{margin-top:clamp(22px,2.6vw,32px);max-width:52ch}
+.work-intro__stat{border-top:1px solid var(--line);padding-top:18px}
+.work-intro__n{
+  font-size:clamp(3rem,6vw,5rem);line-height:.9;letter-spacing:-.05em;font-weight:500;
+  margin-bottom:10px;
 }
-.arch__inner::after{
-  content:"";position:absolute;top:-1px;left:0;right:0;height:1px;
-  background:var(--accent);transform:scaleX(0);transform-origin:0 50%;
-  transition:transform .75s var(--e);
+.work-intro__scroll{
+  display:inline-flex;align-items:center;gap:10px;margin-top:clamp(34px,4.5vw,56px);
+  color:var(--ink-3);font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;
 }
-.arch__item:hover .arch__inner::after{transform:scaleX(1)}
+.work-intro__scroll .arw{display:inline-block;animation:bob 2.2s var(--e) infinite}
 
-.arch__n{display:block;color:var(--accent);transition:color .45s var(--e)}
-.arch__item:hover .arch__n{color:var(--ink)}
+/* --- progress rail (desktop only) --- */
+.workrail{display:none}
 
-.arch__t{
-  margin-top:clamp(26px,3.4vw,48px);
-  font-size:clamp(1.35rem,2.1vw,1.9rem);line-height:1.1;letter-spacing:-.03em;font-weight:500;
+/* --- a project --- */
+.proj2{position:relative;border-top:1px solid var(--line)}
+.proj2__hit{display:block;color:inherit}
+.proj2__in{
+  display:grid;grid-template-columns:1fr;gap:clamp(28px,4vw,56px);
+  padding-block:clamp(48px,7vw,104px);align-items:center;
+}
+.proj2__idx{color:var(--accent);margin-bottom:clamp(14px,1.8vw,22px)}
+.proj2__title{
+  font-size:clamp(2.1rem,5.4vw,4.4rem);line-height:1;letter-spacing:-.04em;font-weight:500;
   transition:transform .6s var(--e);
 }
-.arch__item:hover .arch__t{transform:translateX(8px)}
+.proj2__desc{
+  margin-top:clamp(14px,1.8vw,22px);max-width:44ch;
+  font-size:clamp(1rem,1.25vw,1.24rem);line-height:1.55;color:var(--ink-2);
+}
+.proj2__meta{
+  display:flex;flex-wrap:wrap;gap:10px 0;margin-top:clamp(22px,2.8vw,34px);
+  padding-top:18px;border-top:1px solid var(--line-soft);
+}
+.proj2__meta div{flex:1 1 120px;min-width:100px}
+.proj2__meta dt{margin-bottom:6px}
+.proj2__meta dd{margin:0;font-size:.9rem;letter-spacing:-.012em}
+.proj2__cta{margin-top:clamp(22px,2.6vw,30px);font-size:.92rem}
+.proj2__note{margin-top:clamp(22px,2.6vw,30px);color:var(--ink-3)}
 
-.arch__d{margin-top:12px;color:var(--ink-2);font-size:.95rem;line-height:1.55;max-width:38ch;transition:color .45s var(--e)}
-.arch__item:hover .arch__d{color:var(--ink)}
+/* --- the frames that hold the work --- */
+.proj2__media{position:relative;margin:0}
+.frame{
+  position:relative;overflow:hidden;background:var(--paper-2);
+  border:1px solid var(--line);border-radius:4px;
+  transition:border-color .6s var(--e),box-shadow .6s var(--e),transform .8s var(--e);
+}
+.frame__shot{overflow:hidden;aspect-ratio:4/3}
+.frame__shot img{width:100%;height:100%;object-fit:cover;transition:transform 1.1s var(--e)}
 
-.arch__m{
-  display:flex;justify-content:space-between;align-items:baseline;gap:18px;
-  margin-top:clamp(18px,2.2vw,28px);padding-top:13px;
-  border-top:1px solid var(--line-soft);
-  font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);
+/* browser chrome, for the one project that is a website */
+.frame--browser .frame__bar{
+  display:flex;align-items:center;gap:7px;
+  padding:11px 14px;border-bottom:1px solid var(--line);background:var(--paper-3);
+}
+.frame__dot{width:8px;height:8px;border-radius:50%;background:var(--line);flex:none}
+.frame__url{
+  margin-left:12px;font-size:.66rem;letter-spacing:.04em;color:var(--ink-3);
+  background:var(--paper);border-radius:999px;padding:4px 12px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 
-@media (min-width:861px){
-  .arch{grid-template-columns:repeat(12,1fr)}
-  /* three rows, alternating weight left and right */
-  .arch__item:nth-child(1){grid-column:1 / span 5;grid-row:1}
-  .arch__item:nth-child(2){grid-column:8 / span 5;grid-row:1;margin-top:clamp(40px,6vw,96px)}
-  .arch__item:nth-child(3){grid-column:3 / span 6;grid-row:2}
-  .arch__item:nth-child(4){grid-column:1 / span 5;grid-row:3}
-  .arch__item:nth-child(5){grid-column:7 / span 6;grid-row:3;margin-top:clamp(32px,4.5vw,72px)}
+/* a cropped detail floating over the main shot */
+.frame--float{display:none}
+
+/* full-bleed */
+.proj2--bleed .proj2__media{width:100vw;margin-inline:calc(50% - 50vw)}
+.frame--bleed{border-inline:0;border-radius:0}
+.frame--bleed .frame__shot{aspect-ratio:16/10}
+.proj2__in--under{padding-top:clamp(26px,3vw,40px);align-items:start}
+
+/* the typographic panel that stands in for a missing screenshot */
+.frame--figures{padding:clamp(24px,3vw,40px);background:var(--paper-2)}
+.frame__kicker{color:var(--ink-3);margin-bottom:clamp(20px,2.6vw,30px)}
+.figures li{padding-block:clamp(14px,1.8vw,20px);border-top:1px solid var(--line)}
+.figures li:first-child{border-top:0;padding-top:0}
+.figures__n{
+  display:block;font-size:clamp(1.9rem,3.4vw,2.8rem);line-height:1;
+  letter-spacing:-.045em;font-weight:500;margin-bottom:8px;
 }
+.figures__l{display:block;font-size:.88rem;color:var(--ink-2);line-height:1.5;max-width:34ch}
+
+/* --- entrance: frame unmasks, image settles, copy follows --- */
+.js .proj2 .frame{clip-path:inset(0 0 100% 0);transition:clip-path 1s var(--e)}
+.js .proj2.is-in .frame{clip-path:inset(0 0 0 0)}
+.js .proj2 .frame__shot img{transform:scale(1.12)}
+.js .proj2.is-in .frame__shot img{transform:scale(1);transition:transform 1.3s var(--e)}
+.js .proj2 .proj2__idx,
+.js .proj2 .proj2__title,
+.js .proj2 .proj2__desc,
+.js .proj2 .proj2__meta,
+.js .proj2 .proj2__cta,
+.js .proj2 .proj2__note{
+  opacity:0;transform:translateY(20px);
+  transition:opacity .7s var(--e) var(--d,0s),transform .8s var(--e) var(--d,0s);
+}
+.js .proj2.is-in .proj2__idx{opacity:1;transform:none;--d:.10s}
+.js .proj2.is-in .proj2__title{opacity:1;transform:none;--d:.18s}
+.js .proj2.is-in .proj2__desc{opacity:1;transform:none;--d:.26s}
+.js .proj2.is-in .proj2__meta{opacity:1;transform:none;--d:.34s}
+.js .proj2.is-in .proj2__cta,
+.js .proj2.is-in .proj2__note{opacity:1;transform:none;--d:.42s}
+
+/* stacked layouts: the brief's reading order is
+   number -> image -> title -> description -> meta -> CTA */
+@media (max-width:900px){
+  .proj2__in > .proj2__idx{order:1}
+  .proj2__in > .proj2__media{order:2;margin-bottom:clamp(22px,3vw,32px)}
+  .proj2__in > .proj2__txt{order:3}
+  /* a 4:3 shot at tablet width pushes the section past 110vh */
+  .frame__shot{aspect-ratio:auto;height:clamp(210px,38vh,430px)}
+  .proj2--bleed .frame--bleed .frame__shot{height:clamp(210px,34vh,380px)}
+}
+
+/* ---------- 13b. Section end ---------- */
+.work-end{padding-block:clamp(64px,9vw,140px);border-top:1px solid var(--line)}
+.work-end__title{max-width:18ch}
+.work-end__grid{
+  display:grid;grid-template-columns:1fr;gap:clamp(26px,3vw,44px);
+  margin-top:clamp(28px,3.6vw,48px);align-items:start;
+}
+.work-end__grid p{max-width:56ch}
 
 /* ---------- 14. Process ---------- */
 .process{background:var(--paper-2)}
@@ -846,13 +892,6 @@ body.menu-open .burger span:nth-child(2){transform:translateY(-3px) rotate(-45de
   .portrait{max-width:min(340px,calc(100% - 30px))}
   .contact__grid{grid-template-columns:1fr}
   .about__grid{grid-template-columns:1fr}
-  .proj--a .proj__body,.proj--b .proj__body{grid-template-columns:1fr}
-  .proj--b .proj__txt{order:1}
-  .proj--b .proj__media{order:2}
-  .proj--b .proj__media{aspect-ratio:4/3}
-  .proj--c .proj__media{aspect-ratio:16/10}
-  .proj--c .proj__foot{grid-template-columns:1fr}
-  .proj__idx{position:static;display:block;margin-bottom:14px}
   .xp__btn{grid-template-columns:minmax(0,1fr) auto;row-gap:6px}
   .xp__btn .xp__when{grid-column:1 / -1;order:-1}
   .xp__btn .xp__co{grid-column:1 / -1}
@@ -946,8 +985,8 @@ html.is-entering .page{animation:pageIn .6s var(--e) both}
 
 /* screenshots of light UI can glare on a near-black page; a touch of dimming
    that lifts back to full on hover, so the work is never misrepresented */
-.proj__media img,.cs-fig .media img{filter:brightness(var(--img-dim))}
-.proj:hover .proj__media img,.cs-fig .media:hover img{filter:brightness(1)}
+.frame__shot img,.cs-fig .media img{filter:brightness(var(--img-dim))}
+.proj2__hit:hover .frame__shot img,.cs-fig .media:hover img{filter:brightness(1)}
 
 @media (max-width:1023px){
   .nav__right{gap:10px}
@@ -958,4 +997,135 @@ html.is-entering .page{animation:pageIn .6s var(--e) both}
   :root.theme-switching,:root.theme-switching *,
   :root.theme-switching *::before,:root.theme-switching *::after{transition:none !important}
   .theme svg{transition:opacity .001ms !important}
+}
+
+/* ---------- 30. Selected work — wide screens ---------- */
+@media (min-width:901px){
+  .work-intro__grid{grid-template-columns:minmax(0,1fr) minmax(0,.3fr)}
+  .work-intro__stat{text-align:right}
+  .work-end__grid{grid-template-columns:minmax(0,1.3fr) minmax(0,.7fr)}
+  .work-end__grid>div:last-child{justify-self:end}
+
+  /* each project owns most of a screen. Named areas rather than source order,
+     because mobile needs number -> image -> copy while desktop needs the number
+     sitting above the copy in its own column. */
+  .proj2__in{
+    grid-template-columns:minmax(0,.86fr) minmax(0,1.14fr);
+    grid-template-areas:"idx media" "txt media";
+    grid-template-rows:auto auto;
+    align-content:center;
+    gap:0 clamp(40px,5vw,88px);
+    min-height:78vh;
+  }
+  .proj2__in > .proj2__idx{grid-area:idx}
+  .proj2__in > .proj2__txt{grid-area:txt}
+  .proj2__in > .proj2__media{grid-area:media;align-self:center}
+  .proj2--featured .proj2__in{min-height:88vh}
+  .proj2--flip .proj2__in{
+    grid-template-columns:minmax(0,1.14fr) minmax(0,.86fr);
+    grid-template-areas:"media idx" "media txt";
+  }
+
+  .proj2--bleed .proj2__in--under{
+    grid-template-columns:minmax(0,.86fr) minmax(0,1.14fr);
+    min-height:0;padding-block:clamp(26px,3vw,44px) clamp(48px,7vw,96px);
+  }
+  /* a 16:10 bleed at full width runs the section past 140vh; height-cap it
+     so this project sits in the same 80-90vh rhythm as the others */
+  .proj2--bleed .frame--bleed .frame__shot{aspect-ratio:auto;height:clamp(280px,48vh,560px)}
+
+  /* the frame breaks its column slightly, so the work reads as a presentation
+     rather than a thumbnail parked in a box */
+  .proj2--featured .frame--browser{margin-right:calc(var(--gutter) * -0.5)}
+  .proj2--flip .frame--plain{margin-left:calc(var(--gutter) * -0.5)}
+
+  /* a cropped detail, layered over the main shot */
+  .frame--float{
+    display:block;position:absolute;right:-16px;bottom:-28px;
+    width:32%;max-width:250px;aspect-ratio:4/3;
+    box-shadow:0 18px 40px -22px rgba(0,0,0,.45);
+    transition:transform .9s var(--e),border-color .6s var(--e);
+  }
+  .frame--float img{width:100%;height:100%;object-fit:cover}
+  .proj2__hit:hover .frame--float{transform:translateY(-6px)}
+}
+
+/* --- progress rail ---
+   Kept deliberately narrow. At 1440 the container leaves only ~72px of gutter,
+   so anything wider than the numbers themselves lands on the project copy.
+   The label is rotated so it costs no horizontal space, and the project names
+   only appear on hover, where overlapping content is intentional. */
+@media (min-width:1180px) and (hover:hover) and (pointer:fine){
+  .workrail{
+    display:flex;align-items:center;gap:14px;
+    position:fixed;left:clamp(10px,1.1vw,18px);top:50%;
+    transform:translateY(-50%);z-index:40;
+    flex-direction:column;
+    opacity:0;visibility:hidden;
+    transition:opacity .5s var(--e),visibility 0s linear .5s;
+  }
+  .workrail.is-visible{opacity:1;visibility:visible;transition:opacity .5s var(--e)}
+  .workrail__label{
+    writing-mode:vertical-rl;transform:rotate(180deg);
+    color:var(--ink-3);letter-spacing:.2em;
+  }
+  .workrail__list{display:flex;flex-direction:column;gap:2px}
+  .workrail__item a{
+    position:relative;display:flex;align-items:center;gap:7px;padding-block:6px;
+    color:var(--ink-3);transition:color .45s var(--e);
+  }
+  .workrail__item a .num{
+    font-size:.68rem;letter-spacing:.04em;
+    /* the rail crosses the full-bleed project, so keep the digits legible */
+    text-shadow:0 0 6px var(--paper),0 0 14px var(--paper);
+  }
+  .workrail__item i{
+    display:block;width:5px;height:5px;border-radius:50%;background:currentColor;
+    opacity:.3;transition:opacity .45s var(--e),transform .5s var(--e),background-color .45s var(--e);
+  }
+  .workrail__name{
+    position:absolute;left:100%;margin-left:12px;white-space:nowrap;
+    font-size:.72rem;letter-spacing:.01em;color:var(--ink);
+    background:var(--nav-bg);backdrop-filter:blur(10px);
+    border:1px solid var(--line);border-radius:999px;padding:5px 12px;
+    opacity:0;transform:translateX(-6px);pointer-events:none;
+    transition:opacity .4s var(--e),transform .5s var(--e);
+  }
+  .workrail__item.is-active a{color:var(--ink)}
+  .workrail__item.is-active i{opacity:1;background:var(--accent);transform:scale(1.5)}
+  .workrail__item a:hover{color:var(--ink)}
+  .workrail__item a:hover .workrail__name{opacity:1;transform:none}
+}
+
+/* --- hover, pointer devices only --- */
+@media (hover:hover) and (pointer:fine){
+  .proj2__hit:hover .proj2__title{transform:translateX(7px)}
+  .proj2__hit:hover .frame{border-color:var(--ink-3)}
+  .proj2__hit:hover .frame__shot img{transform:scale(1.03)}
+  .proj2__hit:hover .proj2__cta::after{transform:scaleX(1);transform-origin:0 50%}
+  .proj2__hit:hover .proj2__cta .btn__ico{transform:translate(3px,-3px)}
+  .proj2__hit--static{cursor:default}
+  .proj2__hit--static:hover .proj2__title{transform:none}
+}
+
+/* --- dark mode: frames sit slightly above the page, never invert the work --- */
+:root[data-theme="dark"] .frame,
+:root[data-theme="dark"] .frame--figures{background:var(--paper-2)}
+:root[data-theme="dark"] .frame--browser .frame__bar{background:var(--paper-3)}
+:root[data-theme="dark"] .frame--float{box-shadow:0 18px 44px -20px rgba(0,0,0,.8)}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .frame,
+  :root:not([data-theme="light"]) .frame--figures{background:var(--paper-2)}
+  :root:not([data-theme="light"]) .frame--browser .frame__bar{background:var(--paper-3)}
+  :root:not([data-theme="light"]) .frame--float{box-shadow:0 18px 44px -20px rgba(0,0,0,.8)}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .js .proj2 .frame{clip-path:none !important}
+  .js .proj2 .frame__shot img{transform:none !important}
+  .js .proj2 .proj2__idx,.js .proj2 .proj2__title,.js .proj2 .proj2__desc,
+  .js .proj2 .proj2__meta,.js .proj2 .proj2__cta,.js .proj2 .proj2__note{
+    opacity:1 !important;transform:none !important;
+  }
+  .workrail{transition:none !important}
 }

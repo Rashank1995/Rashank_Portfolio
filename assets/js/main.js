@@ -65,14 +65,24 @@
   (function preloader() {
     var el = $('.preloader');
     if (!el) return;
+
+    // `is-entering` drives a keyframe animation on .page that includes a
+    // transform. Left on the element it keeps filling, and a filling transform
+    // animation makes .page a containing block for position:fixed descendants
+    // — which silently breaks the work rail. Take the class off once it runs.
+    var enter = function () {
+      root.classList.add('is-entering');
+      setTimeout(function () { root.classList.remove('is-entering'); }, 900);
+    };
+
     if (reduce() || sessionStorage.getItem('rr:seen') === '1') {
       el.parentNode.removeChild(el);
-      root.classList.add('is-entering');
+      enter();
       return;
     }
     var done = function () {
       el.classList.add('is-done');
-      root.classList.add('is-entering');
+      enter();
       sessionStorage.setItem('rr:seen', '1');
       setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 1500);
     };
@@ -379,6 +389,54 @@
     run();
     // a few follow-up passes catch late layout shifts (webfonts, images)
     [120, 400, 900, 1800].forEach(function (t) { setTimeout(run, t); });
+  })();
+
+  /* ---------- 11c. Selected-work rail + project entrances ----
+     Shares the scroll tick above rather than adding another listener. */
+  (function selectedWork() {
+    var projects = $$('.proj2');
+    if (!projects.length) return;
+
+    // each project reveals as a unit, so the frame unmasks and the copy
+    // follows in sequence rather than every element firing on its own
+    var pending = projects.slice();
+    onTick.push(function () {
+      if (!pending.length) return;
+      var vh = innerHeight, still = [];
+      for (var i = 0; i < pending.length; i++) {
+        var el = pending[i], r = el.getBoundingClientRect();
+        if (r.top < vh * 0.82 && r.bottom > 0) el.classList.add('is-in');
+        else still.push(el);
+      }
+      pending = still;
+    });
+    if (reduce()) projects.forEach(function (el) { el.classList.add('is-in'); });
+
+    var rail = $('.workrail');
+    if (!rail) return;
+    var items = $$('.workrail__item', rail);
+    var section = $('.work');
+    var current = -1;
+
+    onTick.push(function () {
+      // the rail only exists while the work section is on screen
+      var s = section.getBoundingClientRect();
+      var inSection = s.top < innerHeight * 0.4 && s.bottom > innerHeight * 0.5;
+      rail.classList.toggle('is-visible', inSection);
+      if (!inSection) return;
+
+      // whichever project covers the middle of the viewport wins
+      var mid = innerHeight / 2, best = -1, bestDist = Infinity;
+      for (var i = 0; i < projects.length; i++) {
+        var r = projects[i].getBoundingClientRect();
+        if (r.bottom < 0 || r.top > innerHeight) continue;
+        var d = Math.abs(r.top + r.height / 2 - mid);
+        if (d < bestDist) { bestDist = d; best = i; }
+      }
+      if (best === -1 || best === current) return;
+      current = best;
+      items.forEach(function (it, i) { it.classList.toggle('is-active', i === best); });
+    });
   })();
 
   /* ---------- 12. Seamless marquees --------------------------- */

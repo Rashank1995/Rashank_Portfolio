@@ -143,6 +143,19 @@ their neighbour, and each drifts up to 14px horizontally as the page scrolls (`d
 handled by the parallax loop in `main.js` §9). Drift is off below 940px, where the gutter
 is too narrow to absorb it and the layout is a single column anyway.
 
+**Selected work** is a sequence of immersive project sections rather than a card grid.
+Each sits at roughly 78–93vh on desktop, alternating composition: a browser-chromed
+featured project, a layered shot with a floating cropped detail, a full-bleed band, and a
+typographic panel. A fixed rail on the left tracks the active project; it is deliberately
+narrow (numbers only, rotated label, names on hover) because at 1440px the container leaves
+only ~72px of gutter and anything wider lands on the copy. Stacked layouts reorder to
+number → image → title → description → meta → CTA.
+
+Only three projects have published visuals. **Growth Rudder has no screenshots anywhere in
+the source portfolio**, so its frame carries documented outcomes as type instead. To swap
+in a real image, replace `.frame--figures` in `index.html` with the same `.frame__shot`
+markup the other projects use.
+
 **Working across teams** is five panels sharing one row: names stand vertically until a
 panel is hovered or focused, then it takes ~40% of the row and its copy rises into place
 while the others give way. It runs on CSS `:hover` / `:focus-within` alone — no JS — and the
