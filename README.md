@@ -23,23 +23,19 @@ favicon.svg  robots.txt  sitemap.xml
 
 ## Deploying
 
-Served as a GitHub Pages **project site** from `Rashank1995/Rashank_Portfolio`, which means
-it lives at a subpath:
+Live at **https://rashank.vercel.app/** — Vercel, auto-deploying from `main` on
+`Rashank1995/Rashank_Portfolio`. Push to `main` and it redeploys; there is no build step.
 
-    https://rashank1995.github.io/Rashank_Portfolio/
+Internal paths are **relative, not root-absolute** — `assets/…` from the home page,
+`../assets/…` from `/about/`, `../../assets/…` from a case study. Vercel serves from a
+domain root, so absolute paths would also work there, but relative keeps the site portable:
+it runs unchanged from a subdirectory (a GitHub Pages project site, a staging folder) with
+no rework. If you add or move a page, keep its paths relative to its own depth.
 
-Repo settings → Pages → Source: *Deploy from a branch* → `main` / `/ (root)`.
+Moving to a custom domain later means changing only the canonical/OG URLs — search
+`rashank.vercel.app`, 26 references across the pages plus `sitemap.xml` and `robots.txt`.
 
-Because of that subpath, **every internal path is relative, not root-absolute** — `assets/…`
-from the home page, `../assets/…` from `/about/`, `../../assets/…` from a case study. A path
-starting with `/` would resolve to `rashank1995.github.io/assets/…` and 404. If you add or
-move a page, keep paths relative to that page's own depth.
-
-The upside is that the site is portable: it works unchanged at a domain root too, so moving
-to a custom domain later needs only the canonical/OG URLs updated (see the table below) plus
-a `CNAME` file.
-
-`.nojekyll` is present so Pages skips the Jekyll build step.
+`.nojekyll` is present in case the site is ever served from GitHub Pages instead.
 
 ## Where the content came from
 
