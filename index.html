@@ -25,8 +25,8 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Instrument+Serif:ital@1&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Instrument+Serif:ital@1&display=swap">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@300..700&family=Instrument+Serif:ital@1&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@300..700&family=Instrument+Serif:ital@1&display=swap">
 <link rel="stylesheet" href="/assets/css/main.css">
 <script>(function(){var d=document.documentElement;d.className+=" js";try{var t=localStorage.getItem("rr:theme");if(t==="light"||t==="dark")d.setAttribute("data-theme",t);}catch(e){}})();</script>
 
@@ -678,14 +678,53 @@
         <p class="meta sec-label__idx num">008</p>
         <p class="meta sec-label__txt">Working across teams</p>
       </div>
-      <h2 class="h2" data-reveal style="max-width:20ch;margin-bottom:clamp(30px,4vw,52px)">Design only ships when the whole team is in the room.</h2>
+      <!-- Six cells on a three-column grid: the heading is the first cell,
+           so five collaborators divide evenly and nothing is left stretching. -->
+      <div class="teams" data-stagger="0.06">
+        <div class="teams__lead" data-reveal>
+          <h2 class="teams__title">Design only ships when the whole team is in the room.</h2>
+          <p class="teams__sub">Five groups I work with directly — from the first problem brief through to design QA on staging.</p>
+        </div>
 
-      <div class="teams__grid">
-        <div class="tcell"><span class="meta tcell__n num">01</span><h3>Product managers</h3><p>Aligning on the opportunity in a shared problem brief — context, hypothesis, target users, constraints and the success metrics we will be judged against.</p></div>
-        <div class="tcell"><span class="meta tcell__n num">02</span><h3>Engineers</h3><p>Feasibility review before commitment, detailed specs and redlines at handoff, pairing sessions during implementation, and design QA on staging builds.</p></div>
-        <div class="tcell"><span class="meta tcell__n num">03</span><h3>Business stakeholders</h3><p>From delivery managers to CEO and board level — framing design decisions in business terms, and rebuilding confidence on projects that have lost it.</p></div>
-        <div class="tcell"><span class="meta tcell__n num">04</span><h3>Researchers &amp; data</h3><p>Pairing generative research with funnel, cohort and behavioural analytics so decisions rest on both the “why” and the “how many”.</p></div>
-        <div class="tcell"><span class="meta tcell__n num">05</span><h3>Clients</h3><p>Direct engagement with international clients across the GCC, EMEA/MENA, Japan and the US — workshops, presentations and long-run stakeholder relationships.</p></div>
+        <article class="tcell" data-reveal>
+          <span class="meta tcell__n num">01</span>
+          <div class="tcell__body">
+            <h3>Product managers</h3>
+            <p>Aligning on the opportunity in a shared problem brief — context, hypothesis, target users, constraints and the success metrics we will be judged against.</p>
+          </div>
+        </article>
+
+        <article class="tcell" data-reveal>
+          <span class="meta tcell__n num">02</span>
+          <div class="tcell__body">
+            <h3>Engineers</h3>
+            <p>Feasibility review before commitment, detailed specs and redlines at handoff, pairing sessions during implementation, and design QA on staging builds.</p>
+          </div>
+        </article>
+
+        <article class="tcell" data-reveal>
+          <span class="meta tcell__n num">03</span>
+          <div class="tcell__body">
+            <h3>Business stakeholders</h3>
+            <p>From delivery managers to CEO and board level — framing design decisions in business terms, and rebuilding confidence on projects that have lost it.</p>
+          </div>
+        </article>
+
+        <article class="tcell" data-reveal>
+          <span class="meta tcell__n num">04</span>
+          <div class="tcell__body">
+            <h3>Researchers &amp; data</h3>
+            <p>Pairing generative research with funnel, cohort and behavioural analytics so decisions rest on both the “why” and the “how many”.</p>
+          </div>
+        </article>
+
+        <article class="tcell" data-reveal>
+          <span class="meta tcell__n num">05</span>
+          <div class="tcell__body">
+            <h3>Clients</h3>
+            <p>Direct engagement with international clients across the GCC, EMEA/MENA, Japan and the US — workshops, presentations and long-run stakeholder relationships.</p>
+          </div>
+        </article>
       </div>
     </div>
   </section>

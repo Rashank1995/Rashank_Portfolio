@@ -64,6 +64,7 @@ explicitly rather than showing numbers.
 | Canonical + OG URLs | Search `rashank.design` — swap for the real domain before launch (also in `sitemap.xml` and `robots.txt`) |
 | Accent colour | `--accent` in `assets/css/main.css` §1 for light, §1b for dark (plus `--accent-dark-surface`, the tint used on the inverted panels) |
 | Theme palettes | `assets/css/main.css` §1 (light) and §1b (dark) |
+| Typeface | `--sans` in `assets/css/main.css` §1, plus the Google Fonts `<link>` in each page `<head>` |
 | Local time / timezone | `Asia/Kolkata` in `assets/js/main.js` §13 |
 
 Copyright year and the local clock update themselves.
@@ -100,6 +101,19 @@ A few details worth knowing:
 To go back to "follow my system", clear the key from the console:
 `localStorage.removeItem('rr:theme')`.
 
+## Type
+
+**Host Grotesk** (variable, 300–700) for everything, with **Instrument Serif** italic used
+sparingly for the emphasised word in display headlines (`.em`).
+
+Host Grotesk sets noticeably narrower than a neutral grotesque, so the display scale is
+tuned to it rather than to a generic ramp — `--fs-display` runs 2.9rem → 6.25rem, with a
+separate step for the tablet band (561–860px, where the hero has stacked and the headline
+gets the full column) and for phones. The hero's four headline lines are hard-coded breaks,
+so those clamps are what keeps them from wrapping; the longest line sits at 82–96% of its
+column across the whole range. If you change the typeface or the headline copy, re-check
+that — it's the one place where type metrics and layout are coupled.
+
 ## Interaction notes
 
 Page-load intro (once per browser session), line-by-line headline reveals, clip-path image
@@ -133,4 +147,4 @@ total image weight is ~2.9 MB across 20 files.
 
 If you want the last few points of Lighthouse: convert `assets/img/*.jpg` to WebP or AVIF
 (this machine had no `cwebp`/ImageMagick/Pillow, so they're JPEG at quality 78) and
-self-host Inter + Instrument Serif instead of calling Google Fonts.
+self-host Host Grotesk + Instrument Serif instead of calling Google Fonts.
