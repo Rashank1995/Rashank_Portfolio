@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://rashank.design/sitemap.xml
+Sitemap: https://rashank1995.github.io/Rashank_Portfolio/sitemap.xml

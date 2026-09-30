@@ -253,19 +253,35 @@
     }, { passive: true });
   })();
 
-  /* ---------- 9. Subtle parallax ------------------------------ */
+  /* ---------- 9. Subtle parallax + drift ----------------------- */
+  /* data-parallax moves an element vertically as a percentage of its own
+     height; data-drift moves it horizontally in pixels. Drift is skipped on
+     narrow screens, where the layout is a single column and sideways movement
+     would only risk pushing the page wider than the viewport. */
   (function parallax() {
-    var els = $$('[data-parallax]');
+    var els = $$('[data-parallax], [data-drift]');
     if (!els.length || reduce()) return;
     var ticking = false;
     var update = function () {
       var vh = innerHeight;
+      // above the 861px grid breakpoint the gutter is only ~43px; wait for a
+      // little more room before letting entries drift sideways
+      var allowDrift = innerWidth >= 940;
       els.forEach(function (el) {
+        var amount = parseFloat(el.getAttribute('data-parallax')) || 0; // percent of own height
+        var drift = allowDrift ? (parseFloat(el.getAttribute('data-drift')) || 0) : 0; // px
+        // Checked before the off-screen bail, and clearing rather than skipping:
+        // otherwise an offset applied on a wide viewport survives a resize or a
+        // phone rotation and leaves entries shunted off their column.
+        if (!amount && !drift) {
+          if (el.style.transform) el.style.removeProperty('transform');
+          return;
+        }
         var r = el.getBoundingClientRect();
         if (r.bottom < -200 || r.top > vh + 200) return;
-        var amount = parseFloat(el.getAttribute('data-parallax')) || 6; // percent of own height
         var progress = (r.top + r.height / 2 - vh / 2) / vh; // -1 .. 1
-        el.style.transform = 'translate3d(0,' + (progress * amount).toFixed(2) + '%,0)';
+        el.style.transform = 'translate3d(' + (progress * drift).toFixed(2) + 'px,' +
+                             (progress * amount).toFixed(2) + '%,0)';
       });
       ticking = false;
     };

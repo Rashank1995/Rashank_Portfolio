@@ -21,6 +21,26 @@ assets/img/                    Images at 800w and 1600w; portrait at 480w and 90
 favicon.svg  robots.txt  sitemap.xml
 ```
 
+## Deploying
+
+Served as a GitHub Pages **project site** from `Rashank1995/Rashank_Portfolio`, which means
+it lives at a subpath:
+
+    https://rashank1995.github.io/Rashank_Portfolio/
+
+Repo settings → Pages → Source: *Deploy from a branch* → `main` / `/ (root)`.
+
+Because of that subpath, **every internal path is relative, not root-absolute** — `assets/…`
+from the home page, `../assets/…` from `/about/`, `../../assets/…` from a case study. A path
+starting with `/` would resolve to `rashank1995.github.io/assets/…` and 404. If you add or
+move a page, keep paths relative to that page's own depth.
+
+The upside is that the site is portable: it works unchanged at a domain root too, so moving
+to a custom domain later needs only the canonical/OG URLs updated (see the table below) plus
+a `CNAME` file.
+
+`.nojekyll` is present so Pages skips the Jekyll build step.
+
 ## Where the content came from
 
 Every fact, figure, project, date and link is taken from **https://rashank.framer.website/**
@@ -61,7 +81,7 @@ explicitly rather than showing numbers.
 | Resume link | Search `drive.google.com/file/d/148x5` |
 | Case-study PDF links | In each `work/*/index.html`, search `Explore the full story` |
 | Contact details | Search `rrashank@yahoo.com` / `8129434432` |
-| Canonical + OG URLs | Search `rashank.design` — swap for the real domain before launch (also in `sitemap.xml` and `robots.txt`) |
+| Canonical + OG URLs | Search `rashank1995.github.io/Rashank_Portfolio` — swap if the domain changes (also in `sitemap.xml` and `robots.txt`) |
 | Accent colour | `--accent` in `assets/css/main.css` §1 for light, §1b for dark (plus `--accent-dark-surface`, the tint used on the inverted panels) |
 | Theme palettes | `assets/css/main.css` §1 (light) and §1b (dark) |
 | Typeface | `--sans` in `assets/css/main.css` §1, plus the Google Fonts `<link>` in each page `<head>` |
@@ -119,7 +139,21 @@ that — it's the one place where type metrics and layout are coupled.
 Page-load intro (once per browser session), line-by-line headline reveals, clip-path image
 reveals, custom cursor with `View case` / `Open` states, magnetic CTAs, subtle parallax,
 hover-to-pause marquees, sticky `01 → 08` process counter, expanding experience rows,
-scroll progress bar, cross-page fade. Easing is `cubic-bezier(0.22, 1, 0.36, 1)` throughout.
+scroll progress bar, cross-page fade.
+
+**Further work** is placed as a spread rather than a list: explicit grid placement drops
+the five entries across three rows with deliberate gaps, two of them sitting lower than
+their neighbour, and each drifts up to 14px horizontally as the page scrolls (`data-drift`,
+handled by the parallax loop in `main.js` §9). Drift is off below 940px, where the gutter
+is too narrow to absorb it and the layout is a single column anyway.
+
+**Working across teams** is five panels sharing one row: names stand vertically until a
+panel is hovered or focused, then it takes ~40% of the row and its copy rises into place
+while the others give way. It runs on CSS `:hover` / `:focus-within` alone — no JS — and the
+first panel stays open while nothing is engaged, so the section never reads as a row of
+unexplained labels. It only applies at `min-width: 1024px` **and** `hover: hover`, so touch
+devices get a plain stacked list with every panel already open rather than depending on a
+hover state they can't produce. Easing is `cubic-bezier(0.22, 1, 0.36, 1)` throughout.
 
 Reveals are driven by `getBoundingClientRect` on a shared scroll tick rather than
 `IntersectionObserver`, and the hidden-until-revealed CSS is gated behind `html.js`. Both
@@ -137,6 +171,10 @@ on JS running at all.
 - Both themes were contrast-checked; every text/background pair clears AA in light and dark.
 - The theme toggle is a real `<button>` whose accessible name states the action it performs
   ("Switch to dark theme") and updates after each press.
+- The collaboration panels carry `tabindex="0"` so keyboard users can open them, since
+  there is no link or action to hang a real control on. All five bodies stay in the
+  accessibility tree at every width (hidden with `opacity`, never `display:none`), so
+  screen readers get the full text whether a panel is open or not.
 - Works with JavaScript disabled.
 
 ## Performance
