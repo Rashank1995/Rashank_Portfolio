@@ -68,8 +68,8 @@
 
     // `is-entering` drives a keyframe animation on .page that includes a
     // transform. Left on the element it keeps filling, and a filling transform
-    // animation makes .page a containing block for position:fixed descendants
-    // — which silently breaks the work rail. Take the class off once it runs.
+    // animation makes .page a containing block for position:fixed descendants,
+    // which quietly breaks anything fixed inside it. Drop the class once it runs.
     var enter = function () {
       root.classList.add('is-entering');
       setTimeout(function () { root.classList.remove('is-entering'); }, 900);
@@ -263,43 +263,60 @@
     }, { passive: true });
   })();
 
-  /* ---------- 9. Subtle parallax + drift ----------------------- */
-  /* data-parallax moves an element vertically as a percentage of its own
-     height; data-drift moves it horizontally in pixels. Drift is skipped on
-     narrow screens, where the layout is a single column and sideways movement
-     would only risk pushing the page wider than the viewport. */
+  /* ---------- 9. Image parallax -------------------------------
+     Applied to project covers, case-study figures and the portraits.
+     Written to the independent `translate` property, never `transform`:
+     the reveal zoom and the hover scale already own `transform`, and
+     setting it here would silently cancel both. Images in these frames
+     are given ~14% extra height in CSS so the travel never exposes an
+     edge. Off entirely under reduced motion and on narrow screens. */
   (function parallax() {
-    var els = $$('[data-parallax], [data-drift]');
-    if (!els.length || reduce()) return;
+    var SEL = '.proj__media img, .cs-fig .media img, .portrait__frame img, [data-parallax]';
+    var els = $$(SEL);
+    if (!els.length) return;
+
+    var clear = function () {
+      els.forEach(function (el) { el.style.removeProperty('translate'); });
+    };
+    if (reduce()) { clear(); return; }
+
+    // Matches the CSS breakpoint that grants the images their headroom.
+    // Deliberately matchMedia and not innerWidth: under page zoom the two
+    // disagree, and the pair falling out of step means either oversized
+    // images that never move, or movement with no slack to absorb it.
+    var mqNarrow = window.matchMedia('(max-width: 767px)');
+
     var ticking = false;
     var update = function () {
-      var vh = innerHeight;
-      // above the 861px grid breakpoint the gutter is only ~43px; wait for a
-      // little more room before letting entries drift sideways
-      var allowDrift = innerWidth >= 940;
-      els.forEach(function (el) {
-        var amount = parseFloat(el.getAttribute('data-parallax')) || 0; // percent of own height
-        var drift = allowDrift ? (parseFloat(el.getAttribute('data-drift')) || 0) : 0; // px
-        // Checked before the off-screen bail, and clearing rather than skipping:
-        // otherwise an offset applied on a wide viewport survives a resize or a
-        // phone rotation and leaves entries shunted off their column.
-        if (!amount && !drift) {
-          if (el.style.transform) el.style.removeProperty('transform');
-          return;
-        }
-        var r = el.getBoundingClientRect();
-        if (r.bottom < -200 || r.top > vh + 200) return;
-        var progress = (r.top + r.height / 2 - vh / 2) / vh; // -1 .. 1
-        el.style.transform = 'translate3d(' + (progress * drift).toFixed(2) + 'px,' +
-                             (progress * amount).toFixed(2) + '%,0)';
-      });
       ticking = false;
+      // narrow frames are near full-bleed, where the movement reads as drift
+      // rather than depth, so it is cheaper and calmer to skip it
+      if (mqNarrow.matches) { clear(); return; }
+      var vh = innerHeight;
+      for (var i = 0; i < els.length; i++) {
+        var el = els[i];
+        var r = el.getBoundingClientRect();
+        if (r.bottom < -200 || r.top > vh + 200) continue;
+        var amount = parseFloat(el.getAttribute('data-parallax')) || 5; // % of own height
+        var progress = (r.top + r.height / 2 - vh / 2) / vh;           // -1 .. 1
+        if (progress < -1.4) progress = -1.4; else if (progress > 1.4) progress = 1.4;
+        el.style.translate = '0 ' + (progress * amount).toFixed(2) + '%';
+      }
     };
-    window.addEventListener('scroll', function () {
+    var request = function () {
       if (!ticking) { ticking = true; requestAnimationFrame(update); }
-    }, { passive: true });
-    window.addEventListener('resize', update);
+    };
+    window.addEventListener('scroll', request, { passive: true });
+    window.addEventListener('resize', request);
+    window.addEventListener('load', request);
+    if (mqNarrow.addEventListener) mqNarrow.addEventListener('change', request);
+    if (mqReduce.addEventListener) {
+      mqReduce.addEventListener('change', function () {
+        if (reduce()) clear(); else request();
+      });
+    }
     update();
+    [200, 600, 1400].forEach(function (t) { setTimeout(update, t); });
   })();
 
   /* ---------- 10. Experience accordion ------------------------ */
@@ -391,54 +408,6 @@
     [120, 400, 900, 1800].forEach(function (t) { setTimeout(run, t); });
   })();
 
-  /* ---------- 11c. Selected-work rail + project entrances ----
-     Shares the scroll tick above rather than adding another listener. */
-  (function selectedWork() {
-    var projects = $$('.proj2');
-    if (!projects.length) return;
-
-    // each project reveals as a unit, so the frame unmasks and the copy
-    // follows in sequence rather than every element firing on its own
-    var pending = projects.slice();
-    onTick.push(function () {
-      if (!pending.length) return;
-      var vh = innerHeight, still = [];
-      for (var i = 0; i < pending.length; i++) {
-        var el = pending[i], r = el.getBoundingClientRect();
-        if (r.top < vh * 0.82 && r.bottom > 0) el.classList.add('is-in');
-        else still.push(el);
-      }
-      pending = still;
-    });
-    if (reduce()) projects.forEach(function (el) { el.classList.add('is-in'); });
-
-    var rail = $('.workrail');
-    if (!rail) return;
-    var items = $$('.workrail__item', rail);
-    var section = $('.work');
-    var current = -1;
-
-    onTick.push(function () {
-      // the rail only exists while the work section is on screen
-      var s = section.getBoundingClientRect();
-      var inSection = s.top < innerHeight * 0.4 && s.bottom > innerHeight * 0.5;
-      rail.classList.toggle('is-visible', inSection);
-      if (!inSection) return;
-
-      // whichever project covers the middle of the viewport wins
-      var mid = innerHeight / 2, best = -1, bestDist = Infinity;
-      for (var i = 0; i < projects.length; i++) {
-        var r = projects[i].getBoundingClientRect();
-        if (r.bottom < 0 || r.top > innerHeight) continue;
-        var d = Math.abs(r.top + r.height / 2 - mid);
-        if (d < bestDist) { bestDist = d; best = i; }
-      }
-      if (best === -1 || best === current) return;
-      current = best;
-      items.forEach(function (it, i) { it.classList.toggle('is-active', i === best); });
-    });
-  })();
-
   /* ---------- 12. Seamless marquees --------------------------- */
   (function marquee() {
     $$('.marquee').forEach(function (m) {
@@ -457,6 +426,31 @@
       setDur();
       window.addEventListener('resize', setDur);
     });
+  })();
+
+  /* ---------- 12b. Scrollable rails ---------------------------
+     A region you can only reach by scrolling sideways has to be focusable,
+     or keyboard users can't read past the first card. But it is a plain
+     grid at >=1024 with nothing to scroll, where a tab stop would just be
+     an empty one — so the attribute tracks whether it actually overflows. */
+  (function rails() {
+    var rails = $$('.wgrid');
+    if (!rails.length) return;
+    var sync = function () {
+      rails.forEach(function (r) {
+        if (r.scrollWidth > r.clientWidth + 1) {
+          r.setAttribute('tabindex', '0');
+          r.setAttribute('role', 'group');
+        } else {
+          r.removeAttribute('tabindex');
+          r.removeAttribute('role');
+        }
+      });
+    };
+    sync();
+    window.addEventListener('resize', sync);
+    window.addEventListener('load', sync);
+    [300, 900].forEach(function (t) { setTimeout(sync, t); });
   })();
 
   /* ---------- 13. Local clock (Asia/Kolkata) ------------------ */

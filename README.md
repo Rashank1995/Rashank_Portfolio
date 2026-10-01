@@ -61,10 +61,10 @@ explicitly rather than showing numbers.
 
 ## Two things worth your decision
 
-1. **Years of experience.** Your brief says *5+ years*; your live site says *7 years*, and the
-   timeline (Feb 2020 → present) works out to ~6.5. The site uses **5+** as you specified.
-   It appears in exactly three places — search `5+` in `index.html` (hero eyebrow, stats row)
-   and the meta description in each page `<head>`.
+1. **Years of experience.** Resolved — the site says **7+ years**, matching your original
+   portfolio (the earlier brief said 5+, which understated it). It appears in three places:
+   the hero eyebrow and the stats row in `index.html`, and the meta description in its
+   `<head>`.
 2. **Process stages.** Your brief sketched five stages; your own about page documents **eight**,
    with tools per phase. The eight real ones are used — they're stronger and they're yours.
    They live in `index.html` under `<!-- ===== How I work ===== -->`.
@@ -80,6 +80,7 @@ explicitly rather than showing numbers.
 | Canonical + OG URLs | Search `rashank1995.github.io/Rashank_Portfolio` — swap if the domain changes (also in `sitemap.xml` and `robots.txt`) |
 | Accent colour | `--accent` in `assets/css/main.css` §1 for light, §1b for dark (plus `--accent-dark-surface`, the tint used on the inverted panels) |
 | Theme palettes | `assets/css/main.css` §1 (light) and §1b (dark) |
+| Card colour | `--card` in `assets/css/main.css` — §1 for light, §1b for dark (declared twice there, keep both in sync) |
 | Typeface | `--sans` in `assets/css/main.css` §1, plus the Google Fonts `<link>` in each page `<head>` |
 | Local time / timezone | `Asia/Kolkata` in `assets/js/main.js` §13 |
 
@@ -137,24 +138,21 @@ reveals, custom cursor with `View case` / `Open` states, magnetic CTAs, subtle p
 hover-to-pause marquees, sticky `01 → 08` process counter, expanding experience rows,
 scroll progress bar, cross-page fade.
 
-**Further work** is placed as a spread rather than a list: explicit grid placement drops
-the five entries across three rows with deliberate gaps, two of them sitting lower than
-their neighbour, and each drifts up to 14px horizontally as the page scrolls (`data-drift`,
-handled by the parallax loop in `main.js` §9). Drift is off below 940px, where the gutter
-is too narrow to absorb it and the layout is a single column anyway.
+**Further work** is five full-width cards stacked vertically — number, title and client,
+description, then tag and year, as one horizontal band each. Deliberately not a grid: five
+comparable engagements, so nothing is featured and there is no remainder to compose around.
+Cards are **borderless**, separated from the page by surface alone: `--card` is the page
+colour carrying ~6% of the accent (`#efe7e1` light, `#181312` dark), so they read as warm
+paper rather than outlined grey panels. The accent marker runs down the left edge (a top
+rule reads oddly on a wide, short band), and `grid-auto-rows:1fr` keeps every card the same
+height so a long title wrapping on one of them doesn't look like a bug. Bands collapse to a
+stacked block below 860px. The cards aren't links — no case study exists yet — so hover is
+the accent edge, the number and a 5px nudge; there is deliberately no hover surface change,
+because in light mode every darker surface drops `--ink-3` and `--accent` under 4.5:1.
 
-**Selected work** is a sequence of immersive project sections rather than a card grid.
-Each sits at roughly 78–93vh on desktop, alternating composition: a browser-chromed
-featured project, a layered shot with a floating cropped detail, a full-bleed band, and a
-typographic panel. A fixed rail on the left tracks the active project; it is deliberately
-narrow (numbers only, rotated label, names on hover) because at 1440px the container leaves
-only ~72px of gutter and anything wider lands on the copy. Stacked layouts reorder to
-number → image → title → description → meta → CTA.
-
-Only three projects have published visuals. **Growth Rudder has no screenshots anywhere in
-the source portfolio**, so its frame carries documented outcomes as type instead. To swap
-in a real image, replace `.frame--figures` in `index.html` with the same `.frame__shot`
-markup the other projects use.
+**Selected work** is three side-by-side compositions that alternate which side the image
+sits on — text→image, image→text, text→image — rather than a uniform grid. Hover scales
+the image slightly, shifts the title, and brings in the arrow.
 
 **Working across teams** is five panels sharing one row: names stand vertically until a
 panel is hovered or focused, then it takes ~40% of the row and its copy rises into place
