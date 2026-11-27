@@ -4,14 +4,14 @@ Static site. No build step, no framework, no JS libraries. Open `index.html` thr
 static server and it runs.
 
 ```bash
-cd /Users/radhevr/Project/rashank-portfolio && python3 -m http.server 4321
+cd /Users/radhevr/Project/Rashank_Portfolio && python3 -m http.server 4321
 ```
 
 ## Structure
 
 ```
-index.html                     Home — hero, intro, work, experience, process, toolkit, contact
-about/index.html               About — story, principles
+index.html                     Home — hero, about + toolkit, work, experience, teams, numbers, process, contact
+about/index.html               About — story, principles, resume
 work/bmw-dubai/index.html      Case study 01
 work/cipla-breathfree/         Case study 02
 work/fujifilm-instax/          Case study 03
@@ -33,9 +33,71 @@ it runs unchanged from a subdirectory (a GitHub Pages project site, a staging fo
 no rework. If you add or move a page, keep its paths relative to its own depth.
 
 Moving to a custom domain later means changing only the canonical/OG URLs — search
-`rashank.vercel.app`, 26 references across the pages plus `sitemap.xml` and `robots.txt`.
+`rashank.vercel.app` across the pages plus `sitemap.xml` and `robots.txt`.
 
 `.nojekyll` is present in case the site is ever served from GitHub Pages instead.
+
+## Design
+
+The layout and look follow a reference personal-portfolio theme (Aleric): white and
+near-black sections in turn, one lime accent, very large uppercase display type, pill-shaped
+buttons and tags, numbers in outlined circles, and a giant "Let's work together" sign-off
+above the footer. Everything is written from scratch for this site — no theme code, images
+or text were copied.
+
+- **Type** — **Host Grotesk** for everything, from Google Fonts, kept deliberately light: headings
+  and titles at 500, everything else (body, buttons, tags, labels) at 400. Nothing on the site
+  is heavier than 500, so the font link requests only `wght@400..500`. If you ever want a
+  heavier weight, widen that range in each page `<head>` too.
+- **Type scale** — every font size is one of twelve steps: **14, 16, 18, 24, 28, 32, 40, 48,
+  56, 64, 72, 80 px** (`--t14` … `--t80` in `main.css` §1, written in rem). Components never
+  use a raw size: they use a role (`--fs-display`, `--fs-h2`, `--fs-title`, `--fs-lg` …) or a
+  fixed step. Each role steps down at ≤1023px and ≤599px — e.g. the display size is 80 on
+  desktop, 64 on tablet, 48 on phones — so text stays on the scale at every width. To resize
+  something, move its role to another step; don't add a new size.
+- **Spacing scale** — every margin, padding and gap is one of fourteen steps: **4, 8, 12, 16,
+  24, 32, 40, 48, 56, 64, 72, 80, 88, 94 px** (`--s4` … `--s94` in `main.css` §1). Spacing that
+  changes with screen size uses tokens named `--sp-DESKTOP-TABLET-PHONE` — e.g.
+  `--sp-94-80-80` (section padding) is 94px on desktop, 80px at ≤1023px and 80px at ≤599px —
+  so it is always on the scale. To change a gap, point it at another step; don't add a new
+  value. Left outside the scale on purpose: `auto` margins (centring, pushing items apart),
+  the stat circles' inner padding (a % of the circle so the text always fits), the team
+  slider's centring padding, and decorative-shape offsets.
+- **Descriptions** — every subtitle, intro and paragraph is **18px** on desktop and tablet
+  (`--fs-lg`, also `--fs-lead`) and **16px** on phones; list items, rows and step text are 16px.
+- **Colour** — `--ink #0e0f11` on white, white on `--black #030303`, one accent
+  `--lime #c4ee18`. Lime is only ever a fill (with black text on it) or text on black — never
+  text on white, where it would be unreadable.
+- **Dark sections** — any block with the `.dark` class flips the contextual tokens
+  (`--fg`, `--fg-2`, `--line`, `--card`, `--tag`, `--focus`), so every component inside it
+  adapts without a dark variant of its own. See `main.css` §3.
+- **Logo** — Rashank's own R mark, kept as supplied in `assets/img/logo.svg`. Its path is
+  inlined (`fill="currentColor"`) in the header, menu and footer of every page and coloured by
+  context — `--black` on white, `--lime` inside `.dark` (`.brand__mark` in `main.css` §6) — so it
+  never disappears on the black sections. `favicon.svg` is the same path, black on light browser
+  tabs and lime on dark ones. To change the logo, replace `assets/img/logo.svg` and re-inline its
+  path in the five pages and the favicon.
+- **No theme toggle.** The site is a single, fixed palette — the black/white alternation *is*
+  the design. The old light/dark toggle and its `rr:theme` storage key are gone.
+
+### Home, section by section
+
+| Section | What it holds |
+| --- | --- |
+| Hero (white) | “I’m Rashank R, Senior UI/UX Designer.” with an image pill that cycles through the three project covers, subtitle, social circles, resume pill, portrait with lime/black shapes. On desktop (≥901px) the whole hero fits the first screen under the header — height `clamp(560px, 100svh − header, 880px)`, portrait stretching to fill it |
+| About (dark) | Centred statement that lights up word by word on scroll, two paragraphs, skills, three toolkit cards |
+| Industries band (lime) | Scrolling list of domains |
+| Work (white) | Sticky “WORK” title on the left, three case-study cards on the right, five further engagements below |
+| Experience (dark) | Seven role cards that stack over each other as you scroll (wide, tall screens only) |
+| Working across teams (white) | A centred slider of the five groups — swipe/scroll works on its own; the arrows and counter are an enhancement |
+| Numbers (white) | Four real figures in circles; they count up once when they come into view |
+| Process (dark, grid) | The eight phases, with tools per phase |
+| Skills band (white) | Scrolling list of skills |
+| Contact + footer (dark) | “Let’s work together”, contact pills, quick links |
+
+The reference also has testimonials, a blog and skill-percentage bars. They are **left out on
+purpose** — there is no real content for them, and nothing on this site is invented. Add them
+when real material exists.
 
 ## Where the content came from
 
@@ -43,153 +105,61 @@ Every fact, figure, project, date and link is taken from **https://rashank.frame
 (about, portfolio, the three case studies and contact pages). Nothing was invented.
 Sentences were rewritten for clarity; facts were not changed.
 
-Two places where the source was thin, both marked visibly on the page so they can't ship
-by accident:
-
-- **Design-system sections** on the BMW and Cipla case studies — the portfolio publishes no
-  component/typography/colour boards for these, so each carries a tinted
-  “Placeholder — ready for your assets” block.
-- **Reflection (section 08)** on all three case studies — not present in the source at all.
-  Same tinted block, with prompts to write against.
-
-Fujifilm Instax has no documented quantitative outcome, so the Impact section says so
+Fujifilm Instax has no documented quantitative outcome, so its Outcome section says so
 explicitly rather than showing numbers.
-
-> The live Framer site's about page opens with a paragraph about "Stream AI" post-production
-> workflows on the **Fujifilm Instax** case study — unrelated to Instax and almost certainly
-> leftover template text. It was not carried over.
-
-## Two things worth your decision
-
-1. **Years of experience.** Resolved — the site says **7+ years**, matching your original
-   portfolio (the earlier brief said 5+, which understated it). It appears in three places:
-   the hero eyebrow and the stats row in `index.html`, and the meta description in its
-   `<head>`.
-2. **Process stages.** Your brief sketched five stages; your own about page documents **eight**,
-   with tools per phase. The eight real ones are used — they're stronger and they're yours.
-   They live in `index.html` under `<!-- ===== How I work ===== -->`.
 
 ## Things you'll want to edit
 
 | What | Where |
 | --- | --- |
-| Availability line | Search `Available for selected opportunities` — nav, contact and mobile menu on every page |
+| Availability line | Search `Available for selected opportunities` — menu and contact section on every page |
 | Resume link | Search `drive.google.com/file/d/148x5` |
 | Case-study PDF links | In each `work/*/index.html`, search `Explore the full story` |
 | Contact details | Search `rrashank@yahoo.com` / `8129434432` |
-| Canonical + OG URLs | Search `rashank1995.github.io/Rashank_Portfolio` — swap if the domain changes (also in `sitemap.xml` and `robots.txt`) |
-| Accent colour | `--accent` in `assets/css/main.css` §1 for light, §1b for dark (plus `--accent-dark-surface`, the tint used on the inverted panels) |
-| Theme palettes | `assets/css/main.css` §1 (light) and §1b (dark) |
-| Card colour | `--card` in `assets/css/main.css` — §1 for light, §1b for dark (declared twice there, keep both in sync) |
+| Canonical + OG URLs | Search `rashank.vercel.app` (also in `sitemap.xml` and `robots.txt`) |
+| Accent colour | `--lime` in `assets/css/main.css` §1 |
+| Palette | `assets/css/main.css` §1 (light) and §3 (`.dark`) |
 | Typeface | `--sans` in `assets/css/main.css` §1, plus the Google Fonts `<link>` in each page `<head>` |
-| Local time / timezone | `Asia/Kolkata` in `assets/js/main.js` §13 |
+| Local time / timezone | `Asia/Kolkata` in `assets/js/main.js` §8 |
 
 Copyright year and the local clock update themselves.
 
-## Theme
-
-Light and dark, with a toggle in the nav on every page (sun/moon, left of **Let's Talk**;
-it stays visible on mobile next to the menu button).
-
-How it resolves, in order:
-
-1. An explicit choice, stored in `localStorage` under `rr:theme` — survives reloads and
-   page navigation, and beats the OS setting in both directions.
-2. Otherwise the OS setting, via `prefers-color-scheme` — and it keeps following the OS
-   live, for as long as nobody has touched the toggle.
-
-The stored choice is applied by a tiny inline script in `<head>`, before first paint, so
-there's no white flash on a dark-mode load. The palettes are two token blocks in
-`assets/css/main.css` — §1 light, §1b dark — and the dark one is written twice on purpose:
-once in a `@media (prefers-color-scheme: dark)` query so the site still themes correctly
-with JavaScript disabled, once on `[data-theme="dark"]` for the toggle. Keep the two in
-sync when editing; there's a comment saying so.
-
-A few details worth knowing:
-
-- The dramatic black sections (contact, footer, case-study impact) don't become white in
-  dark mode — they shift to a slightly raised near-black panel, so the inversion still
-  reads as a deliberate break rather than a flashbang.
-- `<meta name="theme-color">` is updated live, so mobile browser chrome matches.
-- Switching cross-fades over 320ms; under `prefers-reduced-motion: reduce` it's instant.
-- Project screenshots are bright; in dark mode they sit at `brightness(0.94)` and lift to
-  full on hover, via `--img-dim`. Set it to `1` in §1b if you'd rather never touch them.
-
-To go back to "follow my system", clear the key from the console:
-`localStorage.removeItem('rr:theme')`.
-
-## Type
-
-**Host Grotesk** (variable, 300–700) for everything, with **Instrument Serif** italic used
-sparingly for the emphasised word in display headlines (`.em`).
-
-Host Grotesk sets noticeably narrower than a neutral grotesque, so the display scale is
-tuned to it rather than to a generic ramp — `--fs-display` runs 2.9rem → 6.25rem, with a
-separate step for the tablet band (561–860px, where the hero has stacked and the headline
-gets the full column) and for phones. The hero's four headline lines are hard-coded breaks,
-so those clamps are what keeps them from wrapping; the longest line sits at 82–96% of its
-column across the whole range. If you change the typeface or the headline copy, re-check
-that — it's the one place where type metrics and layout are coupled.
+The header, menu, contact block and footer are repeated in every page (there is no build
+step to share them). When you change one, change all five — search for the text you edited.
 
 ## Interaction notes
 
-Page-load intro (once per browser session), line-by-line headline reveals, clip-path image
-reveals, custom cursor with `View case` / `Open` states, magnetic CTAs, subtle parallax,
-hover-to-pause marquees, sticky `01 → 08` process counter, expanding experience rows,
-scroll progress bar, cross-page fade.
+Line-by-line headline reveals, fade-up reveals, image reveals, counters, the word-by-word
+statement, the role-card stack, the teams slider, scrolling bands, a full-screen menu and a
+floating back-to-top button.
 
-**Further work** is five full-width cards stacked vertically — number, title and client,
-description, then tag and year, as one horizontal band each. Deliberately not a grid: five
-comparable engagements, so nothing is featured and there is no remainder to compose around.
-Cards are **borderless**, separated from the page by surface alone: `--card` is the page
-colour carrying ~6% of the accent (`#efe7e1` light, `#181312` dark), so they read as warm
-paper rather than outlined grey panels. The accent marker runs down the left edge (a top
-rule reads oddly on a wide, short band), and `grid-auto-rows:1fr` keeps every card the same
-height so a long title wrapping on one of them doesn't look like a bug. Bands collapse to a
-stacked block below 860px. The cards aren't links — no case study exists yet — so hover is
-the accent edge, the number and a 5px nudge; there is deliberately no hover surface change,
-because in light mode every darker surface drops `--ink-3` and `--accent` under 4.5:1.
-
-**Selected work** is three side-by-side compositions that alternate which side the image
-sits on — text→image, image→text, text→image — rather than a uniform grid. Hover scales
-the image slightly, shifts the title, and brings in the arrow.
-
-**Working across teams** is five panels sharing one row: names stand vertically until a
-panel is hovered or focused, then it takes ~40% of the row and its copy rises into place
-while the others give way. It runs on CSS `:hover` / `:focus-within` alone — no JS — and the
-first panel stays open while nothing is engaged, so the section never reads as a row of
-unexplained labels. It only applies at `min-width: 1024px` **and** `hover: hover`, so touch
-devices get a plain stacked list with every panel already open rather than depending on a
-hover state they can't produce. Easing is `cubic-bezier(0.22, 1, 0.36, 1)` throughout.
-
-Reveals are driven by `getBoundingClientRect` on a shared scroll tick rather than
-`IntersectionObserver`, and the hidden-until-revealed CSS is gated behind `html.js`. Both
-deliberate: content that is invisible by default must never depend on an observer firing or
-on JS running at all.
+- Reveals are driven by `getBoundingClientRect` on a shared scroll tick rather than
+  `IntersectionObserver`, and the hidden-until-revealed CSS is gated behind `html.js` and
+  `prefers-reduced-motion: no-preference`. Content that is invisible by default must never
+  depend on an observer firing or on JS running at all.
+- The role cards only stack at `min-width:1024px` **and** `min-height:760px`; a card taller
+  than the viewport would otherwise have its end covered by the next one. While stacking,
+  the script gives every card the tallest card's height so none peeks out from underneath.
+- The menu makes the rest of the page `inert` while open, moves focus to its close button,
+  closes on Escape, and returns focus to the menu button.
 
 ## Accessibility
 
-- Every text/background pair meets WCAG AA (`--ink-3` and `--accent` were darkened from the
-  first draft to clear 4.5:1; the black sections use a lighter accent tint for the same reason).
+- Every text/background pair meets WCAG AA: `--ink-2 #5a5a5e` is 7:1 on white; `--fg-2
+  #9d9da3` is 7.6:1 on black; black on lime is ~15:1.
 - Semantic landmarks, one `h1` per page, no skipped heading levels, skip link, visible focus
-  rings, real `<button>`/`<a>` elements, `aria-expanded` on the accordion and menu.
-- `prefers-reduced-motion: reduce` disables the intro, every transition, the marquees, the
-  custom cursor, parallax and the theme cross-fade, and forces all content visible.
-- Both themes were contrast-checked; every text/background pair clears AA in light and dark.
-- The theme toggle is a real `<button>` whose accessible name states the action it performs
-  ("Switch to dark theme") and updates after each press.
-- The collaboration panels carry `tabindex="0"` so keyboard users can open them, since
-  there is no link or action to hang a real control on. All five bodies stay in the
-  accessibility tree at every width (hidden with `opacity`, never `display:none`), so
-  screen readers get the full text whether a panel is open or not.
-- Works with JavaScript disabled.
+  rings (dark on white, lime on black), real `<button>`/`<a>` elements.
+- Counters keep the real figure in a visually hidden copy, so screen readers never hear the
+  count-up.
+- `prefers-reduced-motion: reduce` turns off every reveal, the marquees, the counters, the
+  statement effect and smooth scrolling, and shows all content immediately.
+- Works with JavaScript disabled (the menu needs JS; the footer's quick links cover
+  navigation without it).
 
 ## Performance
 
-Two font families from Google Fonts, one stylesheet, one deferred script, no libraries.
-All images are lazy-loaded below the fold with `srcset`/`sizes` and explicit dimensions;
-total image weight is ~2.9 MB across 20 files.
+One font family from Google Fonts, one stylesheet, one deferred script, no libraries.
+Images below the fold are lazy-loaded with `srcset`/`sizes` and explicit dimensions.
 
 If you want the last few points of Lighthouse: convert `assets/img/*.jpg` to WebP or AVIF
-(this machine had no `cwebp`/ImageMagick/Pillow, so they're JPEG at quality 78) and
-self-host Host Grotesk + Instrument Serif instead of calling Google Fonts.
+and self-host Host Grotesk instead of calling Google Fonts.
